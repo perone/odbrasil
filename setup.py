@@ -17,7 +17,7 @@ setup(
     author_email='christian.perone@gmail.com',
     description='A Python package for retrieving and parsing Brazilian government open data.',
     long_description=open('README.rst').read(),
-    packages=['odbrasil'],
+    packages=['odbrasil', 'odbrasil.legislativo'],
     package_dir={'odbrasil': 'odbrasil'},
     keywords='open data, parser, odbrasil, brasil',
     platforms='Any',
