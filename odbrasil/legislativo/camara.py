@@ -78,9 +78,38 @@ class Deputados(RESTServiceClient):
         xml_deputado_list = tree.findall('deputado')
 
         if format=='pandas':
-            return _pandas_parse_deputados(xml_deputado_list)
+            return pandas_parse_deputados(xml_deputado_list)
         else:
             return xml_deputado_list
+
+class Orgaos(RESTServiceClient):
+    """ This class is responsible by accessing, extracting and parsing the data
+    from the `Orgaos <http://www.camara.gov.br/SitCamaraWS/Orgaos.asmx>`_ 
+    government endpoint. 
+    """
+
+    base_url = 'http://www.camara.gov.br/SitCamaraWS/Orgaos.asmx/'
+    content_type = 'text/xml'
+
+    def get_orgaos(self, format='pandas', **params):
+        """ This method will get a Orgaos list in various formats, use the
+        ``format`` parameter to define which parameter you want to parse the
+        data.
+
+        :param format: "pandas" or "xml"
+        :param params: extra parameters will be redirected to Requests
+        :rtype: the parsed xml or the pandas `DataFrame`.
+        """
+        req_orgaos = self.get('ObterOrgaos', **params)
+        tree = et.fromstring(req_orgaos.text.encode(req_orgaos.encoding))
+        xml_orgao_list = tree.findall('orgao')
+
+        if format=='pandas':
+            return pandas_parse_orgao(xml_orgao_list)
+        else:
+            return xml_orgao_list
+      
+
 
 def pandas_parse_deputados(xml_deputado_list):
     """ Method used to parse a xml parsed list of ``deputado``
@@ -101,4 +130,21 @@ def pandas_parse_deputados(xml_deputado_list):
         deputados_list.append(deputado_dict)
 
     pandas_frame = pandas.DataFrame(deputados_list)
+    return pandas_frame
+
+
+def pandas_parse_orgao(xml_orgao_list):
+    """ Method used to parse a xml parsed list of ``orgao``
+    elements into a pandas `DataFrame`.
+
+    :param xml_orgao_list: the xml parsed data returned by
+                              calling :meth:`Orgaos.get_orgaos` with the
+                              ``format`` as 'xml' instead of 'pandas'.
+    """
+    orgao_list = []
+
+    for orgao in xml_orgao_list:
+        orgao_list.append(orgao.attrib)
+
+    pandas_frame = pandas.DataFrame(orgao_list)
     return pandas_frame
