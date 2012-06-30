@@ -16,13 +16,15 @@ Today we have some projects doing scraping of the open data, but these projects 
 `Pandas <http://pandas.pydata.org>`_ and do not have an unified and organized API, most of them are
 just *scripts* created in a hurry on Hackatons and do not have any documentation.
 
-The API we're working on is a simple and 
+The API we're working on is simple and easy-to-use, intended not only for programmers but also for statisticians
+that doesn't have a strong background development.
 
 We **really need** the community support in order to cover a great part of the API available for the
 government open data, if you want to help, join us on Github. 
 
 I have chosen the Pandas because it is becoming the *lingua franca* of the Python data analysis toolkits and
 because it is integrated with `matplotlib <http://matplotlib.sourceforge.net/>`_ and `scipy/numpy <http://docs.scipy.org/doc/>`_ ecosystem.
+
 
 Here is an example of what the API can do:
 
