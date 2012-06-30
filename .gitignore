@@ -1,0 +1,10 @@
+# Use wildcards as well
+*~
+*.swp
+*.bak
+*.pyc
+build/
+dev/
+*.egg-info
+*.class
+.tox
