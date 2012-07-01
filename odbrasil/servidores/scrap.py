@@ -10,6 +10,7 @@ http://www.portaldatransparencia.gov.br/servidores/index.asp
 """
 
 import re
+import numpy as np
 
 import requests
 from BeautifulSoup import BeautifulSoup
@@ -58,8 +59,10 @@ def get_servidor_remuneracao_bruta(servidor_id):
     req = requests.get(URL_BASE_REMUNERACAO, params=params)
     soup = BeautifulSoup(req.content)
     bruta = re.compile("bruta$")
-    td_bruta = soup.findAll('td', text=bruta)[0]
-    remuneracao_bruta = td_bruta.previous.nextSibling.next.text
-    return remuneracao_bruta
+    td_bruta = soup.findAll('td', text=bruta)
+    if len(td_bruta) <= 0:
+        return np.nan
+    remuneracao_bruta = td_bruta[0].previous.nextSibling.next.text
+    return float(remuneracao_bruta.replace(".", '').replace(",","."))
 
 
