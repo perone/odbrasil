@@ -37,7 +37,10 @@ def get_servidor_id(name):
     detalha = soup.findAll('a', href=re.compile("^Servidor-DetalhaServidor"))
     
     if len(detalha) > 1:
-        raise RuntimeError("More than one detail para 'Servidor', len is %d" % len(detalha))
+        raise RuntimeError("More than one detail to %s, len is %d" % (name, len(detalha)))
+
+    if len(detalha) <= 0:
+        raise RuntimeError("Unable to find the id for the name %s" % name)
 
     link = detalha[0]
     regex_idservidor = re.compile('IdServidor=(\d+)')

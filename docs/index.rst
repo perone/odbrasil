@@ -26,6 +26,9 @@ I have chosen the Pandas because it is becoming the *lingua franca* of the Pytho
 because it is integrated with `matplotlib <http://matplotlib.sourceforge.net/>`_ and `scipy/numpy <http://docs.scipy.org/doc/>`_ ecosystem.
 
 
+Usage example: legislativo.Deputados
+-------------------------------------
+
 Here is an example of what the API can do:
 
 ::
@@ -83,6 +86,48 @@ Here is an example of what the API can do:
     >>> uf_deputados.plot(kind='barh')
 
 .. image:: _static/uf_plot.png    
+
+
+Usage example: monthly payments for UFRGS teachers
+--------------------------------------------------
+
+First, you have to download the CSV data called 'Servidores 2009-2012' from the
+`government site <http://www.portaldatransparencia.gov.br/planilhas/>`_, unfortunatelly
+this data has 44MB compressed and there is no REST API for that, so you have to download it because
+it cannot be shipped together with **odbrasil** package due to its size.
+
+
+::
+
+    >>> # Import required modules
+    >>> import pandas
+    >>> from odbrasil.servidores import scrap
+    # This operation may take a while, it's big file to parse
+    >>> dframe = pandas.read_csv('servidores.csv', sep=";")
+    >>> len(dframe)
+    706755
+    # We have now a DataFrame with 706k rows !
+    # I'm going to filter only UFRGS employees
+    >>> ufrgs_lotacao = 'UNIVERSIDADE FED. DO RIO GRANDE DO SUL'
+    >>> only_ufrgs = dframe[dframe.ORG_LOTACAO==ufrgs_lotacao]
+    >>> len(only_ufrgs)
+    6080
+    # It's better now, but let's filter only teachers
+    >>> professor_cargo = 'PROFESSOR 3 GRAU'
+    >>> teachers = only_ufrgs[only_ufrgs.DESCRICAO_CARGO==professor_cargo]
+    >>> len(teachers)
+    2428
+    # Now, let's use the odbrasil scrap functions from the Servidores module
+    # to get the monthly payments of these teachers
+    # The get_salario_bruto will use the name of the teacher to get his
+    # monthly payment
+    >>> def get_salario_bruto(nome):
+    ...     return scrap.get_servidor_remuneracao_bruta(scrap.get_servidor_id(nome))
+
+
+
+
+
 
 See the API documentation for more information.
 
