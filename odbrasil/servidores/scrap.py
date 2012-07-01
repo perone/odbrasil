@@ -6,6 +6,10 @@ This module implements the methods to extract the information
 present on on the government site for open data: 
 http://www.portaldatransparencia.gov.br/servidores/index.asp
 
+The methods present in this module are intended to do web scraping of the
+data from the "Portal da Transparencia", since the government doesn't provide
+an decent REST API for that service yet.
+
 |
 """
 
