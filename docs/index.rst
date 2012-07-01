@@ -88,7 +88,7 @@ Here is an example of what the API can do:
 .. image:: _static/uf_plot.png    
 
 
-Usage example: monthly payments for UFRGS teachers
+Usage example: monthly payments of UFRGS teachers
 --------------------------------------------------
 
 First, you have to download the CSV data called 'Servidores 2009-2012' from the
@@ -99,7 +99,6 @@ it cannot be shipped together with **odbrasil** package due to its size.
 
 ::
 
-    >>> # Import required modules
     >>> import pandas
     >>> from odbrasil.servidores import scrap
     # This operation may take a while, it's big file to parse
@@ -107,29 +106,72 @@ it cannot be shipped together with **odbrasil** package due to its size.
     >>> len(dframe)
     706755
     # We have now a DataFrame with 706k rows !
+
     # I'm going to filter only UFRGS employees
     >>> ufrgs_lotacao = 'UNIVERSIDADE FED. DO RIO GRANDE DO SUL'
     >>> only_ufrgs = dframe[dframe.ORG_LOTACAO==ufrgs_lotacao]
     >>> len(only_ufrgs)
     6080
+
     # It's better now, but let's filter only teachers
     >>> professor_cargo = 'PROFESSOR 3 GRAU'
     >>> teachers = only_ufrgs[only_ufrgs.DESCRICAO_CARGO==professor_cargo]
     >>> len(teachers)
     2428
+
+    # Let's filter now only teachers from computer science department
+    >>> dep_informatica = 'DEPARTAMENTO DE INFORMATICA APLICADA'
+    >>> informatica = teachers[teachers.UORG_LOTACAO==dep_informatica]
+    >>> len(informatica)
+    48
+
     # Now, let's use the odbrasil scrap functions from the Servidores module
     # to get the monthly payments of these teachers
     # The get_salario_bruto will use the name of the teacher to get his
     # monthly payment
     >>> def get_salario_bruto(nome):
-    ...     return scrap.get_servidor_remuneracao_bruta(scrap.get_servidor_id(nome))
+    ... try:
+    ...     servidor_id = scrap.get_servidor_id(nome)
+    ...     salario = scrap.get_servidor_remuneracao_bruta(servidor_id)
+    ...     return salario
+    ... except:
+    ...     return np.nan
+
+    # And now we create a new column on the DataFrame with the new values
+    >>> informatica["SALARIO_BRUTO"] = informatica["NOME"].map(get_salario_bruto)
+    
+    # You're free now to do data analysis using this new column data
+    >>> informatica["SALARIO_BRUTO"].describe()
+    count       44.000000
+    mean     10683.359091
+    std       4192.178186
+    min       2910.380000
+    25%       8023.490000
+    50%      11131.690000
+    75%      13381.347500
+    max      24938.710000
+
+    >>> informatica["SALARIO_BRUTO"].hist()
+
+.. image:: _static/ufrgs_histogram.png
+
+::
+    
+    >>>
+    # Create a new DataFrame only with 2 columns: NOME, SALARIO_BRUTO
+    >>> nome_salario = informatica[["NOME", "SALARIO_BRUTO"]]
+    
+    # Settings the NaNs to zero
+    >>> nome_salario["SALARIO_BRUTO"] = nome_salario["SALARIO_BRUTO"].fillna(0)
+
+    # Print the top-10
+    >>> nome_salario.sort_index(by='SALARIO_BRUTO', ascending=False)[0:10]
+
+.. image:: _static/ufrgs_top_10.png
 
 
-
-
-
-
-See the API documentation for more information.
+And that's it, pretty easy don't you think ? See the API documentation and
+the Pandas documentation for more information.
 
 .. _installation:
 
