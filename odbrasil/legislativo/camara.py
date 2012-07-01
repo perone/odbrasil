@@ -110,8 +110,13 @@ class Orgaos(RESTServiceClient):
             return xml_orgao_list
       
     def get_tipos_orgao(self, format='pandas', **params):
-        """
+        """ This method will get a list of 'Tipos de Orgaos'. Use the
+        ``format`` parameter to define which parameter you want to parse the
+        data.
 
+        :param format: "pandas" or "xml"
+        :param params: extra parameters will be redirected to Requests
+        :rtype: the parsed xml or the pandas `DataFrame`.
         """
         req_tipos_orgao = self.get('ListarTiposOrgaos', **params)
         tree = et.fromstring(req_tipos_orgao.text.encode(req_tipos_orgao.encoding))
