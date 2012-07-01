@@ -105,10 +105,22 @@ class Orgaos(RESTServiceClient):
         xml_orgao_list = tree.findall('orgao')
 
         if format=='pandas':
-            return pandas_parse_orgao(xml_orgao_list)
+            return pandas_parse_only_attributes(xml_orgao_list)
         else:
             return xml_orgao_list
       
+    def get_tipos_orgao(self, format='pandas', **params):
+        """
+
+        """
+        req_tipos_orgao = self.get('ListarTiposOrgaos', **params)
+        tree = et.fromstring(req_tipos_orgao.text.encode(req_tipos_orgao.encoding))
+        xml_tipo_orgao_list = tree.findall('tipoOrgao')
+
+        if format=='pandas':
+            return pandas_parse_only_attributes(xml_tipo_orgao_list)
+        else:
+            return xml_tipo_orgao_list
 
 
 def pandas_parse_deputados(xml_deputado_list):
@@ -118,6 +130,7 @@ def pandas_parse_deputados(xml_deputado_list):
     :param xml_deputado_list: the xml parsed data returned by
                               calling :meth:`Deputados.get_deputados` with the
                               ``format`` as 'xml' instead of 'pandas'.
+    :rtype: pandas 'DataFrame'
     """
     deputados_list = []
 
@@ -132,19 +145,19 @@ def pandas_parse_deputados(xml_deputado_list):
     pandas_frame = pandas.DataFrame(deputados_list)
     return pandas_frame
 
+def pandas_parse_only_attributes(xml_list):
+    """ This method converts a list of xml elements containing only
+    attributes (without childs) to a pandas `DatFrame`.
 
-def pandas_parse_orgao(xml_orgao_list):
-    """ Method used to parse a xml parsed list of ``orgao``
-    elements into a pandas `DataFrame`.
-
-    :param xml_orgao_list: the xml parsed data returned by
-                              calling :meth:`Orgaos.get_orgaos` with the
-                              ``format`` as 'xml' instead of 'pandas'.
+    :param xml_list: 
+    :rtype: pandas `DataFrame`
     """
-    orgao_list = []
 
-    for orgao in xml_orgao_list:
-        orgao_list.append(orgao.attrib)
+    elements_list = []
 
-    pandas_frame = pandas.DataFrame(orgao_list)
+    for element in xml_list:
+        elements_list.append(element.attrib)
+
+    pandas_frame = pandas.DataFrame(elements_list)
     return pandas_frame
+
