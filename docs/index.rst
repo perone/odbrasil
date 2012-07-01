@@ -169,6 +169,21 @@ it cannot be shipped together with **odbrasil** package due to its size.
 
 .. image:: _static/ufrgs_top_10.png
 
+::
+
+    >>>
+    # You can also do things like this:
+    >>> informatica.JORNADA_DE_TRABALHO.value_counts().plot(kind='barh')
+
+.. image:: _static/ufrgs_jornada.png
+
+::
+    >>> nome_salario.index = nome_salario["NOME"].values
+    >>> nome_salario.pop("NOME")
+    >>> nome_salario.sort('SALARIO_BRUTO', ascending=False)[0:10].plot(kind='barh')
+
+.. image:: _static/ufrgs_top_10_plot.png
+
 
 And that's it, pretty easy don't you think ? See the API documentation and
 the Pandas documentation for more information.
